@@ -1,8 +1,8 @@
-# 12-Lead ECG Dataset utils for YOLO 
+# 12-Lead ECG Dataset utils for YOLO
 
 This repository provides resources and scripts to prepare and augment 12-lead ECG datasets for use with YOLOv7 models. The scripts include utilities for crawling background images, augmenting ECG data with various effects, extracting Regions of Interest (ROIs), and managing dataset organization.
 
-***
+---
 
 ### Examples (YOLO Dataset)
 ![nn](https://ifh.cc/g/vFKtT8.png)
@@ -10,11 +10,10 @@ This repository provides resources and scripts to prepare and augment 12-lead EC
 ![nn](https://ifh.cc/g/3doOZ0.png)
 ![nn](https://ifh.cc/g/4B1jcW.png)
 
+---
 
-*** 
 ## Requirements
 To run the scripts in this repository, install the following dependencies:
-
 
 ### Install Requirements
 To install the dependencies on Ubuntu, use the following command:
@@ -27,7 +26,8 @@ Ensure you have Python and `pip` installed on your system. You can verify this w
 python --version
 pip --version
 ```
-***
+
+---
 
 ## Contents
 
@@ -51,6 +51,11 @@ def crawl_image_data(key_word: str, max_num: int, des_dir: str):
 ```bash
 python crawling.py --keyword 'topview table texture background' --max_num 100 --des_dir ./bg_noises 
 ```
+Also, we'll need paper image for image augmentation
+
+```bash
+python crawling.py --keyword 'paper texture background' --max_num 100 --des_dir ./bg_papers 
+```
 
 ### `augmentation.py`
 This script provides functions for augmenting ECG images and labels by adding background noise, applying shadows, and introducing geometric distortions.
@@ -68,7 +73,7 @@ Adds background noise to an image and adjusts bounding box labels accordingly.
 
 - **Highlights:**
   - Pads the image with random borders.
-  - Adds background noise using a provided background image.
+  - Adds background noise using a provided background and paper image.
   - Adjusts bounding box coordinates in YOLO format.
 
 ##### 2. `generate_spot_light_mask`
@@ -108,14 +113,34 @@ if __name__ == "__main__":
         os.makedirs(output_image_directory, exist_ok=True)
         os.makedirs(output_label_directory, exist_ok=True)
 
+        image_files = [f for f in os.listdir(image_directory) if f.endswith((".jpg", ".png", ".jpeg"))]
+        label_files = [f for f in os.listdir(label_directory) if f.endswith(".txt")]
+
         for image_file, label_file in tqdm(zip(image_files, label_files), total=len(image_files), desc="Processing"):
             img = cv2.imread(os.path.join(image_directory, image_file))
-            aug_img, boxes = add_background_noise(img, background_img, label_file)
-            cv2.imwrite(os.path.join(output_image_directory, f"{image_file[:-4]}-augmented{image_file[-4:]}"), aug_img)
-            # Save adjusted labels
-            with open(os.path.join(output_label_directory, f"{label_file[:-4]}-augmented.txt"), 'w') as f:
-                for box in boxes:
-                    f.write(f"{box[0]} {box[1]:.6f} {box[2]:.6f} {box[3]:.6f} {box[4]:.6f}\n")
+            if img is None:
+                continue
+
+            mode = random.uniform(0, 1)
+            if mode > 0.1:
+                bg_files = [f for f in os.listdir(bg_path) if f.endswith((".jpg", ".png", ".jpeg"))]
+                pi_files = [f for f in os.listdir(pi_path) if f.endswith((".jpg", ".png", ".jpeg"))]
+                bg = cv2.imread(os.path.join(bg_path, random.choice(bg_files)))
+                pi = cv2.imread(os.path.join(pi_path, random.choice(pi_files)))
+                augimg, boxes = add_background_noise(img, background_img=bg, paper_img=pi, label_file=os.path.join(label_directory, label_file))
+                augimg = add_spot_light(augimg)
+
+                cv2.imwrite(os.path.join(output_image_directory, f"{image_file[:-4]}-augmented{image_file[-4:]}"), augimg)
+                with open(os.path.join(output_label_directory, f"{label_file[:-4]}-augmented.txt"), 'w') as f:
+                    for box in boxes:
+                        class_id, x_center, y_center, box_width, box_height = box
+                        f.write(f"{int(class_id)} {x_center:.6f} {y_center:.6f} {box_width:.6f} {box_height:.6f}\n")
+            else:
+                cv2.imwrite(os.path.join(output_image_directory, f"{image_file[:-4]}-augmented{image_file[-4:]}"), img)
+                shutil.copy(
+                    os.path.join(label_directory, label_file),
+                    os.path.join(output_label_directory, f"{label_file[:-4]}-augmented.txt")
+                )
 ```
 
 ### `roi.py`
@@ -136,10 +161,9 @@ python roi.py --weights [pt_file] --source [image_file]
 - `--weights`: Path to the YOLOv7 model file (e.g., `yolov7.pt`).
 - `--source`: Path to the image or folder of images for inference.
 
-***
+---
 
 ## Notes
 - Ensure the `icrawler`, `cv2`, and `torch` libraries are installed before running the scripts.
 - The `augmentation.py` script assumes images and labels follow the YOLO format.
-- Background images should be downloaded using `crawling_bg.py` and stored in the `bg_noises` directory.
-
+- Background images and paper textures should be stored in `bg_noises` and `bg_papers` directories, respectively.

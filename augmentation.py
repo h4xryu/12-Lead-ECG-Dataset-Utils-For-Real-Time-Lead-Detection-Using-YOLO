@@ -40,7 +40,7 @@ def add_background_noise(img, background_img, paper_img, label_file):
     paper_img = cv2.resize(paper_img, (w, h))
 
     # 배경 감지
-    main = np.all(original_img >= 250, axis=-1)
+    main = np.all(original_img >= 225, axis=-1)
     original_img[main] = paper_img[main]
 
 

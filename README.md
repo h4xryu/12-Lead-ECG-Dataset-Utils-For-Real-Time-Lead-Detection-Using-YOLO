@@ -48,12 +48,8 @@ def crawl_image_data(key_word: str, max_num: int, des_dir: str):
   - `des_dir`: Directory to save the downloaded images.
 
 #### Usage Example:
-```python
-if __name__ == '__main__':
-    key_word = 'top view table background'
-    max_num = 10000
-    des_dir = './bg_noises'
-    crawl_image_data(key_word, max_num, des_dir)
+```bash
+python crawling.py --keyword 'topview table texture background' --max_num 100 --des_dir ./bg_noises 
 ```
 
 ### `augmentation.py`

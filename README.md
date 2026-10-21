@@ -119,7 +119,7 @@ def crawl_image_data(key_word: str, max_num: int, des_dir: str):
   - des_dir: Directory to save the downloaded images.
 
 #### Usage Example:
-python crawling.py --keyword 'topview table texture background' --max_num 100 --des_dir ./bg_noises  이거 md에 맞게 그리드로 잘 이미지 배치하게 해봐.  같은 레포지ㅌ리에 이이미지들 넣을거
+python crawling.py --keyword 'topview table texture background' --max_num 100 --des_dir ./bg_noises  
 
 Also, we'll need paper image for image augmentation
 

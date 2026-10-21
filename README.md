@@ -75,7 +75,7 @@ Test-set average precision at an IoU threshold of 0.5 (AP@0.5) for each ECG lead
 
 <p align="center">
   <img
-    src="images/yolo_ap_by_lead.png"
+    src="images/yolo_ap_by_lead.svg"
     alt="Test-set AP at IoU 0.5 for each ECG lead"
     width="100%"
   />

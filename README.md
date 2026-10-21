@@ -54,3 +54,29 @@ Examples of ECG paper images and their associated lead-region annotations.
     </tr>
   </tbody>
 </table>
+
+### 3. Model Training and Evaluation
+
+#### Training Progress
+
+Validation mAP and training loss curves over 150 epochs.
+
+<p align="center">
+  <img
+    src="images/yolo_training.png"
+    alt="YOLO training results showing validation mAP, box loss, class loss, and objectness loss"
+    width="100%"
+  />
+</p>
+
+#### Test-Set Performance by Lead
+
+Test-set average precision at an IoU threshold of 0.5 (AP@0.5) for each ECG lead.
+
+<p align="center">
+  <img
+    src="images/yolo_ap_by_lead.png"
+    alt="Test-set AP at IoU 0.5 for each ECG lead"
+    width="100%"
+  />
+</p>

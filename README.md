@@ -1,4 +1,4 @@
-# 12-Lead ECG Dataset utils for YOLO
+# 12-Lead ECG Dataset utils for Real-Time Lead Detection using YOLO 
 
 This repository provides resources and scripts to prepare and augment 12-lead ECG datasets for use with YOLOv7 models. The scripts include utilities for crawling background images, augmenting ECG data with various effects, extracting Regions of Interest (ROIs), and managing dataset organization.
 

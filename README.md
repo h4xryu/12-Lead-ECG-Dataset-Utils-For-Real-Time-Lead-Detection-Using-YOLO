@@ -169,47 +169,6 @@ Applies bend distortion to an image using sinusoidal transformations.
 #### Dataset Augmentation Workflow
 The script processes images and labels, applying augmentations with background noise and other effects. The augmented data is saved in designated directories.
 
-#### Example Workflow:
-if __name__ == "__main__":
-    for set in set_list:
-        print(f"Current set: {set}")
-        image_directory = os.path.join(root, set, "images")
-        label_directory = os.path.join(root, set, "labels")
-        output_image_directory = os.path.join(root + "_augmented", set, "images")
-        output_label_directory = os.path.join(root + "_augmented", set, "labels")
-
-        os.makedirs(output_image_directory, exist_ok=True)
-        os.makedirs(output_label_directory, exist_ok=True)
-
-        image_files = [f for f in os.listdir(image_directory) if f.endswith((".jpg", ".png", ".jpeg"))]
-        label_files = [f for f in os.listdir(label_directory) if f.endswith(".txt")]
-
-        for image_file, label_file in tqdm(zip(image_files, label_files), total=len(image_files), desc="Processing"):
-            img = cv2.imread(os.path.join(image_directory, image_file))
-            if img is None:
-                continue
-
-            mode = random.uniform(0, 1)
-            if mode > 0.1:
-                bg_files = [f for f in os.listdir(bg_path) if f.endswith((".jpg", ".png", ".jpeg"))]
-                pi_files = [f for f in os.listdir(pi_path) if f.endswith((".jpg", ".png", ".jpeg"))]
-                bg = cv2.imread(os.path.join(bg_path, random.choice(bg_files)))
-                pi = cv2.imread(os.path.join(pi_path, random.choice(pi_files)))
-                augimg, boxes = add_background_noise(img, background_img=bg, paper_img=pi, label_file=os.path.join(label_directory, label_file))
-                augimg = add_spot_light(augimg)
-
-                cv2.imwrite(os.path.join(output_image_directory, f"{image_file[:-4]}-augmented{image_file[-4:]}"), augimg)
-                with open(os.path.join(output_label_directory, f"{label_file[:-4]}-augmented.txt"), 'w') as f:
-                    for box in boxes:
-                        class_id, x_center, y_center, box_width, box_height = box
-                        f.write(f"{int(class_id)} {x_center:.6f} {y_center:.6f} {box_width:.6f} {box_height:.6f}\n")
-            else:
-                cv2.imwrite(os.path.join(output_image_directory, f"{image_file[:-4]}-augmented{image_file[-4:]}"), img)
-                shutil.copy(
-                    os.path.join(label_directory, label_file),
-                    os.path.join(output_label_directory, f"{label_file[:-4]}-augmented.txt")
-                )
-
 
 ### roi.py
 This script extracts Regions of Interest (ROIs) from images using a YOLOv7 model and saves them as individual image files along with their bounding box information.

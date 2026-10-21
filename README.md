@@ -38,7 +38,7 @@ before and after refinement.
 
 <p align="center">
   <img
-    src="https://github.com/h4xryu/12-Lead-ECG-Dataset-Utils-For-Real-Time-Lead-Detection-Using-YOLO/images/lead_roi_detection.gif"
+    src="https://raw.githubusercontent.com/h4xryu/12-Lead-ECG-Dataset-Utils-For-Real-Time-Lead-Detection-Using-YOLO/main/images/lead_roi_detection.gif"
     width="85%"
     alt="Real-Time Lead ROI Detection"
   />
